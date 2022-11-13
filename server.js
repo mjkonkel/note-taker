@@ -4,7 +4,6 @@ const fs = require('fs');
 const uuid = require('./helpers/uuid');
 
 const PORT = 3001;
-const notes = require('./db/db.json')
 
 const app = express();
 
@@ -17,42 +16,42 @@ app.get('/notes', (req, res) =>
     res.sendFile(path.join(__dirname, '/public/notes.html'))
 );
 
+// POST request for reading and updating json file with new notes
 app.post('/api/notes', (req, res) => {
     console.log(`${req.method} received`)
 
-// const { text, title } = req.body
-// console.log(req.body)
+    const newNote = {
+        note_id: uuid(),
+        title: req.body.title,
+        text: req.body.text,
+    };
 
-const newNote = {
-    note_id: uuid(),
-    title: req.body.title,
-    text: req.body.text,
-};
+    // reading json file and writing new notes to the file
+    fs.readFile('./db/db.json', 'utf8', (err, data) => {
+        if (err) {
+            console.error(err);
+        } else {
+            const parsedNotes = JSON.parse(data);
+            // console.log(parsedNotes)
 
-fs.readFile('./db/db.json', 'utf8', (err, data) => {
-    if (err) {
-        console.error(err);
-    } else {
-        const parsedNotes = JSON.parse(data);
-        console.log(parsedNotes)
-
-        parsedNotes.push(newNote);
-        console.log(parsedNotes)
+            parsedNotes.push(newNote);
+            // console.log(parsedNotes)
 
 
-        fs.writeFile(
-            './db/db.json',
-            JSON.stringify(parsedNotes),
-            (writeErr) =>
-                writeErr
-                    ? console.error(writeErr)
-                    : console.info('Success')
-        )
-    }
-});
+            fs.writeFile(
+                './db/db.json',
+                JSON.stringify(parsedNotes),
+                (writeErr) =>
+                    writeErr
+                        ? console.error(writeErr)
+                        : console.info('Success, note added')
+            )
+        }
+    });
 
 });
 
+// GET request for posting the notes in the json file to the page
 app.get('/api/notes', (req, res) => {
     console.log(`${req.method} request received`);
     return fs.readFile('./db/db.json', 'utf8', (err, data) => {
@@ -66,7 +65,7 @@ app.get('/api/notes', (req, res) => {
 });
 
 
-
+// additional URLs will route to the homepage
 app.get('/*', (req, res) =>
     res.sendFile(path.join(__dirname, '/public/index.html'))
 );
