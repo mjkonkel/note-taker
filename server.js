@@ -21,7 +21,7 @@ app.post('/api/notes', (req, res) => {
     console.log(`${req.method} received`)
 
     const newNote = {
-        note_id: uuid(),
+        id: uuid(),
         title: req.body.title,
         text: req.body.text,
     };
@@ -41,10 +41,15 @@ app.post('/api/notes', (req, res) => {
             fs.writeFile(
                 './db/db.json',
                 JSON.stringify(parsedNotes),
-                (writeErr) =>
+                (writeErr) => {
                     writeErr
                         ? console.error(writeErr)
                         : console.info('Success, note added')
+
+
+                res.send('note saved')
+
+                }
             )
         }
     });
