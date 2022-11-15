@@ -32,11 +32,8 @@ app.post('/api/notes', (req, res) => {
             console.error(err);
         } else {
             const parsedNotes = JSON.parse(data);
-            // console.log(parsedNotes)
 
             parsedNotes.push(newNote);
-            // console.log(parsedNotes)
-
 
             fs.writeFile(
                 './db/db.json',
@@ -46,14 +43,11 @@ app.post('/api/notes', (req, res) => {
                         ? console.error(writeErr)
                         : console.info('Success, note added')
 
-
-                res.send('note saved')
-
+                    res.send('note saved')
                 }
             )
         }
     });
-
 });
 
 // GET request for posting the notes in the json file to the page
